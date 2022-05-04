@@ -12,7 +12,7 @@ type node struct {
 	depth    int
 }
 
-func NewTrie() *trie {
+func New() *trie {
 	return &trie{
 		root: &node{
 			children: make(map[rune]*node),
@@ -28,11 +28,12 @@ func (t *trie) Insert(s string) {
 		isLast := i == len(s)-1
 		nd2, ok := nd.children[r]
 		if ok {
-			if !nd2.last && isLast {
+			if isLast && !nd2.last {
 				nd2.last = true
 				t.size++
 				return
 			}
+			nd = nd2
 			continue
 		}
 		nd2 = &node{
@@ -48,4 +49,20 @@ func (t *trie) Insert(s string) {
 		}
 		nd = nd2
 	}
+}
+
+func (t *trie) Find(s string) bool {
+	nd := t.root
+	for i, r := range s {
+		isLast := i == len(s)-1
+		nd2, ok := nd.children[r]
+		if !ok {
+			return false
+		}
+		if isLast && nd2.last {
+			return true
+		}
+		nd = nd2
+	}
+	return false
 }
