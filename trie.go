@@ -95,6 +95,9 @@ func (t *trie) Remove(s string) {
 		if parent.last {
 			return
 		}
+		if parent.parent == nil {
+			return
+		}
 		parent = parent.parent
 		r = parent.val
 	}
