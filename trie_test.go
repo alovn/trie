@@ -42,6 +42,8 @@ func Test_trie_Remove(t *testing.T) {
 	tr.Remove("ab")
 	tr.Remove("abcd")
 	tr.Remove("hello")
+	tr.Remove("a")
+	tr.Remove("c")
 
 	tests := []struct {
 		name string
@@ -57,6 +59,48 @@ func Test_trie_Remove(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			if got := tr.Find(tt.args); got != tt.want {
 				t.Errorf("trie.Find() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func Test_trie_Size(t *testing.T) {
+	tr := New()
+	tr.Add("ab")
+	tr.Add("abc")
+	tr.Add("abcd")
+	tr.Add("hello")
+
+	tests := []struct {
+		name string
+		want int
+	}{
+		{name: "size", want: 4},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := tr.Size(); got != tt.want {
+				t.Errorf("trie.Size() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+
+	tr.Remove("ab")
+	tr.Remove("abcd")
+	tr.Remove("hello")
+	tr.Remove("a")
+	tr.Remove("c")
+
+	tests = []struct {
+		name string
+		want int
+	}{
+		{name: "size", want: 1},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := tr.Size(); got != tt.want {
+				t.Errorf("trie.Size() = %v, want %v", got, tt.want)
 			}
 		})
 	}

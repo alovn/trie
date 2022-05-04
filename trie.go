@@ -82,6 +82,7 @@ func (t *trie) Remove(s string) {
 	if !exists {
 		return
 	}
+	t.size--
 	if len(lastNode.children) > 0 {
 		lastNode.last = false
 		return
@@ -97,4 +98,8 @@ func (t *trie) Remove(s string) {
 		parent = parent.parent
 		r = parent.val
 	}
+}
+
+func (t *trie) Size() int {
+	return t.size
 }
