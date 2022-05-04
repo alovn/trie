@@ -9,6 +9,7 @@ type node struct {
 	val      rune
 	last     bool
 	children map[rune]*node
+	parent   *node
 	depth    int
 }
 
@@ -22,7 +23,7 @@ func New() *trie {
 	}
 }
 
-func (t *trie) Insert(s string) {
+func (t *trie) Add(s string) {
 	nd := t.root
 	for i, r := range s {
 		isLast := i == len(s)-1
@@ -39,6 +40,7 @@ func (t *trie) Insert(s string) {
 		nd2 = &node{
 			val:      r,
 			children: make(map[rune]*node),
+			parent:   nd,
 			depth:    nd.depth + 1,
 		}
 		nd.children[r] = nd2
@@ -52,17 +54,47 @@ func (t *trie) Insert(s string) {
 }
 
 func (t *trie) Find(s string) bool {
+	_, exists := t.findNode(s)
+	return exists
+}
+
+func (t *trie) findNode(s string) (lastNode *node, exists bool) {
 	nd := t.root
 	for i, r := range s {
 		isLast := i == len(s)-1
 		nd2, ok := nd.children[r]
 		if !ok {
-			return false
+			return nil, false
 		}
 		if isLast && nd2.last {
-			return true
+			lastNode = nd2
+			exists = true
+			return
 		}
 		nd = nd2
 	}
-	return false
+	return nil, false
+}
+
+func (t *trie) Remove(s string) {
+	//find
+	lastNode, exists := t.findNode(s)
+	if !exists {
+		return
+	}
+	if len(lastNode.children) > 0 {
+		lastNode.last = false
+		return
+	}
+	//remove
+	parent := lastNode.parent
+	r := lastNode.val
+	for len(parent.children) <= 1 {
+		delete(parent.children, r)
+		if parent.last {
+			return
+		}
+		parent = parent.parent
+		r = parent.val
+	}
 }
